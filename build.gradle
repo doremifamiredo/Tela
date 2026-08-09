@@ -1,0 +1,20 @@
+plugins {
+    id 'org.jetbrains.kotlin.jvm' version '2.2.20'
+}
+
+group = 'olleg.ro'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation("io.github.serpro69:kotlin-faker:1.16.2")
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib'
+}
+
+kotlin {
+    jvmToolchain(17)
+}
