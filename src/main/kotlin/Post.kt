@@ -5,7 +5,8 @@ data class Post(
     val authorId: Int,
     val createdAt: LocalDate,
     var text: String,
-    var comments: List<Comment> = emptyList(),
+    var attachment: List<Attachment>? = null,
+    var comments: List<Comment>? = null,
     var likes: Int = 0,
     var isChanged: Boolean = false,
     var isPinned: Boolean = false
