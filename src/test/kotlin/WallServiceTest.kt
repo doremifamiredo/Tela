@@ -8,6 +8,7 @@ class WallServiceTest {
 
     @Before
     fun initPost() {
+        WallService.resetAllFields()
         WallService.addPost(1, faker.lorem.words())
     }
 
@@ -39,7 +40,7 @@ class WallServiceTest {
         assertEquals(Comment(1, 1, text), actual)
     }
 
-    @Test(expected = PostNotFoundException::class)
+    @Test(expected = NotFoundException.PostNotFound::class)
     fun shouldThrow() {
         val nonExistentId = WallService.getLastPostId() + 1
         WallService.createComment(nonExistentId, Comment(1, 1, faker.lorem.words()))
@@ -48,35 +49,35 @@ class WallServiceTest {
     @Test
     fun successfullyReportComment() {
         val existentId = WallService.getLastPostId()
-        WallService.createComment(existentId, Comment(1, 1,faker.lorem.words()))
-        assertTrue(WallService.reportComment(1,1,1))
+        WallService.createComment(existentId, Comment(1, 1, faker.lorem.words()))
+        assertTrue(WallService.reportComment(1, 1, 1))
     }
 
-    @Test
+    @Test(expected = WrongReasonException::class)
     fun reportWrong() {
         val existentId = WallService.getLastPostId()
-        WallService.createComment(existentId, Comment(1, 1,faker.lorem.words()))
-        assertFalse(WallService.reportComment(existentId,1,9))
+        WallService.createComment(existentId, Comment(1, 1, faker.lorem.words()))
+        WallService.reportComment(existentId, 1, 9)
     }
 
-    @Test
+    @Test(expected = NotFoundException.PostNotFound::class)
     fun reportNonExistingPost() {
         val existentId = WallService.getLastPostId()
-        WallService.createComment(existentId, Comment(1, 1,faker.lorem.words()))
-        assertFalse(WallService.reportComment(existentId + 1,1,1))
+        WallService.createComment(existentId, Comment(1, 1, faker.lorem.words()))
+        WallService.reportComment(existentId + 1, 1, 1)
     }
 
-    @Test
+    @Test(expected = NotFoundException.CommentNotFound::class)
     fun reportWrongComment() {
         val postId = WallService.getLastPostId()
         val commentId = 1
-        WallService.createComment(postId, Comment(commentId, 1,faker.lorem.words()))
-        assertFalse(WallService.reportComment(postId, commentId + 1,1))
+        WallService.createComment(postId, Comment(commentId, 1, faker.lorem.words()))
+        WallService.reportComment(postId, commentId + 1, 1)
     }
 
-    @Test
+    @Test(expected = NotFoundException.NullComment::class)
     fun reportNonExistingComment() {
         val postId = WallService.getLastPostId()
-        assertFalse(WallService.reportComment(postId, 1, 1))
+        WallService.reportComment(postId, 1, 1)
     }
 }

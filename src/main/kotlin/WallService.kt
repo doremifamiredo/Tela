@@ -1,4 +1,6 @@
 import java.time.LocalDate
+import NotFoundException.*
+import Report.*
 
 object WallService {
     private var posts = emptyArray<Post>()
@@ -33,7 +35,7 @@ object WallService {
     }
 
     fun createComment(postId: Int, comment: Comment): Comment {
-        val post = findPostById(postId) ?: throw PostNotFoundException("No post with id $postId")
+        val post = findPostById(postId) ?: throw PostNotFound(postId)
         if (post.comments == null) {
             post.comments = arrayListOf(comment)
         } else {
@@ -57,16 +59,23 @@ object WallService {
 
     fun reportComment(postId: Int, commentId: Int, reason: Int): Boolean {
         if (reason !in 0..8) {
-            return false
+            throw WrongReasonException(reason)
         }
-        val post = findPostById(postId) ?: return false
-        val comments = post.comments ?: return false
+        val post = findPostById(postId) ?: throw PostNotFound(postId)
+        val comments = post.comments ?: throw NullComment(postId)
         for (comm in comments) {
             if (comm.commentId == commentId) {
-                reports.add(Report.ReportComment(commentId, postId, reason))
+                reports.add(ReportComment(commentId, postId, reason))
                 return true
             }
         }
-        return false
+        throw CommentNotFound(commentId, postId)
+    }
+
+    fun resetAllFields() {
+        posts = emptyArray<Post>()
+        nextId = 1
+        authors = emptyMap()
+        reports = arrayListOf()
     }
 }
