@@ -1,12 +1,12 @@
-import java.time.LocalDate
 import NotFoundException.*
-import Report.*
+import Report.ReportComment
+import java.time.LocalDate
 
 object WallService {
-    private var posts = emptyArray<Post>()
+    private var posts = mutableListOf<Post>()
     var nextId = 1
-    private var authors = emptyMap<Int, String>()
-    private var reports = arrayListOf<Report>()
+    var authors = mutableListOf<String>()
+    private var reports = mutableListOf<Report>()
 
     fun addPost(authorId: Int, text: String): Post {
         val id = nextId
@@ -44,38 +44,40 @@ object WallService {
         return comment
     }
 
-    fun findPostById(postId: Int): Post? {
-        for (post in posts) {
-            if (post.postId == postId) {
-                return post
-            }
-        }
-        return null
+    fun findPostById(postId: Int): Post {
+        if (postId >= posts.size) throw PostNotFound(postId)
+        return posts[postId]
     }
 
     fun getLastPostId(): Int {
-        return posts.last().postId
+        return posts.size - 1
     }
 
     fun reportComment(postId: Int, commentId: Int, reason: Int): Boolean {
         if (reason !in 0..8) {
             throw WrongReasonException(reason)
         }
-        val post = findPostById(postId) ?: throw PostNotFound(postId)
-        val comments = post.comments ?: throw NullComment(postId)
-        for (comm in comments) {
-            if (comm.commentId == commentId) {
-                reports.add(ReportComment(commentId, postId, reason))
-                return true
-            }
-        }
-        throw CommentNotFound(commentId, postId)
+        val post = findPostById(postId)
+        post.comments ?: throw NullComment(postId)
+        if (commentId >= post.comments!!.size) throw PostCommentNotFound(commentId, postId)
+        reports.add(ReportComment(commentId, postId, reason))
+        return true
     }
 
     fun resetAllFields() {
-        posts = emptyArray<Post>()
+        posts = mutableListOf()
         nextId = 1
-        authors = emptyMap()
-        reports = arrayListOf()
+        authors = mutableListOf()
+        reports = mutableListOf()
+    }
+
+    fun addAuthor(name: String) : Int {
+        val authorId = authors.size
+        authors.add(authorId, name)
+        return authorId
+    }
+
+    fun checkAuthor(authorId: Int) : Boolean {
+        return authorId < authors.size
     }
 }

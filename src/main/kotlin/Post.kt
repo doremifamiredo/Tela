@@ -7,19 +7,18 @@ data class Post(
     val createdAt: LocalDate,
     var text: String,
     var attachment: List<Attachment>? = null,
-    var comments: ArrayList<Comment>? = null,
+    var comments: MutableList<Comment> = mutableListOf(),
     var likes: Int = 0,
     var isChanged: Boolean = false,
     var isPinned: Boolean = false
 )
 
 data class Comment(
-    val commentId: Int,
     val authorId: Int,
-    val text: String,
+    var text: String,
     val date: LocalDate = LocalDate.now(),
-    var comments: List<Comment>? = null,
-    val likes: Int = 0
+    val likes: Int = 0,
+    var isDeleted: Boolean = false
 )
 
 sealed class Attachment(type: String) {
@@ -34,3 +33,11 @@ sealed class Report(postId: Int, reason: Int) {
     class ReportComment(val commentId: Int, val postId: Int, val reason: Int): Report(postId, reason)
     class ReportAttachment(val attachId: Int, val postId: Int, val reason: Int): Report(postId, reason)
 }
+
+data class Note(
+    val authorId: Int,
+    var text: String,
+    val createdAt: LocalDate = LocalDate.now(),
+    val comments: MutableList<Comment> = mutableListOf(),
+    var isDeleted: Boolean = false
+)
