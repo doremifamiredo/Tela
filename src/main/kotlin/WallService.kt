@@ -5,7 +5,7 @@ import java.time.LocalDate
 object WallService {
     private var posts = mutableListOf<Post>()
     var nextId = 1
-    var authors = mutableListOf<String>()
+    private var authors = mutableMapOf<Int, String>()
     private var reports = mutableListOf<Report>()
 
     fun addPost(authorId: Int, text: String): Post {
@@ -67,17 +67,17 @@ object WallService {
     fun resetAllFields() {
         posts = mutableListOf()
         nextId = 1
-        authors = mutableListOf()
+        authors = mutableMapOf()
         reports = mutableListOf()
     }
 
-    fun addAuthor(name: String) : Int {
-        val authorId = authors.size
-        authors.add(authorId, name)
+    fun addAuthor(name: String): Int {
+        val authorId = authors.keys.maxOrNull()?.plus(1) ?: 1
+        authors.put(authorId, name)
         return authorId
     }
 
-    fun checkAuthor(authorId: Int) : Boolean {
-        return authorId < authors.size
+    fun checkAuthor(authorId: Int): Boolean {
+        return authors.containsKey(authorId)
     }
 }
