@@ -41,3 +41,18 @@ data class Note(
     val comments: MutableList<Comment> = mutableListOf(),
     var isDeleted: Boolean = false
 )
+
+data class Chat(
+    val talker1Id: Int,
+    val talker2Id: Int,
+    val messages: MutableList<Message> = mutableListOf(),
+    var isDeleted: Boolean = false
+)
+
+data class Message(
+    val talkerId: Int,
+    val text: String,
+    val date: LocalDate = LocalDate.now(),
+    var unread: Boolean = true,
+    var like: Boolean = false
+)

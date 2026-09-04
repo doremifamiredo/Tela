@@ -1,6 +1,5 @@
 import NotFoundException.*
 import RealNoteService.notes
-import WallService.authors
 
 object RealNoteService : NoteService {
     var notes = mutableListOf<Note>()
@@ -148,7 +147,7 @@ class ValidatingNoteService(
     }
 
     private fun requireValidAuthor(authorId: Int) {
-        if (authorId >= authors.size) {
+        if (!WallService.checkAuthor(authorId)) {
             throw AuthorNotFound(authorId)
         }
     }

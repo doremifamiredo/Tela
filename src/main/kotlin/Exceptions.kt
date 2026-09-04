@@ -8,6 +8,7 @@ sealed class NotFoundException(message: String): RuntimeException(message) {
     class NoteDeleted(noteId: Int): NotFoundException("The note $noteId has already been deleted")
     class NoteCommentDeleted(noteId: Int, commentId: Int)
         : NotFoundException("Comment $commentId of note $noteId has already been deleted")
+    class ChatNotFound(talker1Id: Int, talker2Id: Int): NotFoundException("Chat for $talker1Id and $talker2Id not found")
 }
 
 class WrongReasonException(val reason: Int) : RuntimeException("Reason $reason is not valid")
